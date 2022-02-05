@@ -10,7 +10,11 @@ def midpoint(point1:tuple, point2:tuple) -> tuple:
     return ((point1[0] + point2[0])/2, (point1[1] + point2[1])/2)
 
 def inter_point(point1:tuple, point2:tuple, jump_factor:float) -> tuple:
-    return ((point1[0] + point2[0]) * jump_factor, (point1[1] + point2[1]) * jump_factor)
+    '''
+    NOTE: Point returned has integer coordinates. Coordinates are coerced
+    to int for rendering as pixel locations.
+    '''
+    return (int((point1[0] + point2[0]) * jump_factor), int((point1[1] + point2[1]) * jump_factor))
 
 def polygon_height(polygon:tuple) -> float:
     '''
@@ -84,21 +88,22 @@ def polygon_from_center(center:tuple, radius:tuple) -> tuple:
 class FractalGUI(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
-        self.master = master
-        self.pack()
+        self.root = master
 
     def create_canvas(self, width, height):
-        canvas = tk.Canvas(self.master, bg="black", width=width, height=height)
-        img = tk.PhotoImage(width=self.canvas_width, height=self.canvas_height)
-        canvas.create_image((self.canvas_width/2, self.canvas_height/2), image=self.img, state="normal")
+        canvas = tk.Canvas(self.root, bg="black", width=width, height=height)
         return canvas
 
-    def fill_point(self, coords):
-        pass
+    def create_image(self, width, height):
+        canvas = self.create_canvas(width=width, height=height)
+        canvas.pack()
+        img = tk.PhotoImage(width=width, height=height)
+        canvas.create_image((width//2, height//2), image=img, state="normal")
+        return img
 
 class ChaosGameFractal:
-    def __init__(self, center:tuple, radius:float, window_width:int, window_height:int): # Will add more params in time
-        self.center, self.radius, self.canvas_width, self.canvas_height = center, radius, window_width, window_height
+    def __init__(self, center:tuple, radius:float): # Will add more params in time
+        self.center, self.radius = center, radius
         self.vertices = polygon_from_center(center, radius)
         self.fractal_pts = {}
 
@@ -114,34 +119,23 @@ class ChaosGameFractal:
             self.init_rand_point = random.randint(math.ceil(min_x), math.floor(max_x)), random.randint(math.ceil(min_y), math.floor(max_y))
         self.fractal_pts[0] = self.init_rand_point
 
-        # Construct GUI
-        # self.root = tk.Tk()
-        # self.root.title("Fractal generator")
-        # self.canvas = tk.Canvas(self.root, width=self.canvas_width, height=self.canvas_height, bg="black")
-        # self.canvas.pack()
-        # self.img = tk.PhotoImage(width=self.canvas_width, height=self.canvas_height)
-        # self.canvas.create_image((self.canvas_width/2, self.canvas_height/2), image=self.img, state="normal")
-        # self.root.mainloop()
-
-    def next_point(self, i:int, jump_factor:float, skip_n:int=0) -> tuple:
+    def generate_point(self, i:int, jump_factor:float, skip_n:int=0) -> tuple:
         rand_vertex = random.choice(self.vertices)
-        new_point = inter_point(rand_vertex, self.fractal_pts[i-1], 0.5)
+        new_point = inter_point(rand_vertex, self.fractal_pts[i-1], jump_factor=jump_factor)
+        self.fractal_pts[i] = new_point
         return new_point
 
-    def plot_fractal(self):
-        '''
-        Should width and height be passed as parameter?
-        '''
-
-        i = 1
-        while True:
-            print("running fractal generator")
-            next = self.next_point(i, 0.5)
-            self.fractal_pts[i] = next
-            print(f'new point is ({next[0]}, {next[1]})')
-            self.img.put('white', (int(next[0]), int(next[1])))
-            i += 1
-
 if __name__ == '__main__':
-    game = ChaosGameFractal((450, 450), 200, 900, 900)
-    # game.plot_fractal()
+    root = tk.Tk()
+    gui = FractalGUI(master=root)
+    canvas_image = gui.create_image(900,900)
+
+    game = ChaosGameFractal(center=(450, 450), radius=200)
+    
+    i = 1
+    while True:
+        point = game.generate_point(i=i, jump_factor=0.5, skip_n=0)
+        print(f'Iteration {i}; point is {point}')
+        canvas_image.put('white', point)
+        root.update()
+        i += 1
