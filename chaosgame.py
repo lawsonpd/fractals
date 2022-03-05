@@ -43,12 +43,9 @@ def is_contained(polygon:tuple, test_point:tuple) -> bool:
 
     sum_of_angles = sum([gamma(p[0], p[1], p[2]) for p in inner_triangles])
 
-    # if sum_of_angles == 360:
-    #     return True
-    # else:
-    #     return False
-    # return inner_triangles
-    return sum_of_angles
+    if sum_of_angles == 360:
+        return True
+    return False
 
 def polygon_from_center(center:tuple, radius:int, num_vertices:int) -> tuple:
     '''
@@ -75,19 +72,6 @@ def polygon_from_center(center:tuple, radius:int, num_vertices:int) -> tuple:
     # in radians
     rad = math.radians
 
-    # Calculated based on fact that the right triangle formed by the center
-    # of triangle, the center of the baseline, and either of the other
-    # two points is a 30-60-90 triangle.
-    # center_to_baseline = radius * math.sin(rad(30))
-    # baseline_center_point = center[0], center[1] - center_to_baseline
-
-    # len_half_baseline = center_to_baseline / math.tan(rad(30))
-
-    # a = center[0], center[1] + radius
-    # b = baseline_center_point[0] + len_half_baseline, baseline_center_point[1]
-    # c = baseline_center_point[0] - len_half_baseline, baseline_center_point[1]
-
-    # return a, b, c
     alpha = 360 / num_vertices
 
     x_part = lambda i: radius * math.cos(rad(i * alpha))
