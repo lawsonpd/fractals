@@ -32,7 +32,6 @@ def gamma(a:float, b:float, c:float):
 
 def is_contained(polygon:tuple, test_point:tuple) -> bool:
     '''
-    
     '''
     dists_to_point = [euc_dist(vertex, test_point) for vertex in polygon]
     # edge_length = euc_dist(polygon[0], polygon[1])
