@@ -43,7 +43,7 @@ def is_contained(polygon:tuple, test_point:tuple) -> bool:
 
     sum_of_angles = sum([gamma(p[0], p[1], p[2]) for p in inner_triangles])
 
-    if sum_of_angles == 360:
+    if sum_of_angles == (len(polygon) - 1) * 360:
         return True
     return False
 
