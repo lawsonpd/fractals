@@ -3,21 +3,23 @@ import random
 
 from chaosgame_utils import inter_point, is_contained, polygon_from_center, get_random_point
 
-class FractalGUI(tk.Frame):
-    def __init__(self, master=None):
-        super().__init__(master)
-        self.root = master
+class FractalGUI(tk.Tk):
+    def __init__(self, width, height):
+        super().__init__()
 
-    def create_canvas(self, width, height):
-        canvas = tk.Canvas(self.root, bg="black", width=width, height=height)
-        return canvas
+        self.title("Fractal chaos game")
 
-    def create_image(self, width, height):
-        canvas = self.create_canvas(width=width, height=height)
-        canvas.pack()
-        img = tk.PhotoImage(width=width, height=height)
-        canvas.create_image((width//2, height//2), image=img, state="normal")
-        return img
+        self.ui_frame = tk.Frame(self, width=200, bg="white")
+        self.ui_frame.pack()
+
+        self.test_lbl = tk.Label(self.ui_frame, text="Test")
+        self.test_lbl.pack()
+
+        self.canvas = tk.Canvas(self, bg="black", width=width, height=height)
+        self.canvas.pack(fill=tk.X)
+
+        self.img = tk.PhotoImage(width=width, height=height)
+        self.canvas_img = self.canvas.create_image((width//2, height//2), image=self.img, state="normal")
 
 class ChaosGameFractal:
     def __init__(self, center:tuple, radius:float, num_vertices:int): # Will add more params in time
@@ -46,18 +48,14 @@ class ChaosGameFractal:
         return new_point
 
 if __name__ == '__main__':
-    root = tk.Tk()
-    gui = FractalGUI(master=root)
-    canvas_image = gui.create_image(900,900)
-    btn_test = tk.Button(root, bg="white", text="Test")
-
+    # root = tk.Tk()
+    gui = FractalGUI(900, 900)
     game = ChaosGameFractal(center=(450, 450), radius=400, num_vertices=6)
-    
+
     i = 1
     while True:
         point = game.generate_point(i=i, jump_factor=0.5, skip_n=0)
         print(f'Iteration {i}; point is {point}')
-        canvas_image.put('white', point)
+        gui.canvas_img.put('white', point)
         gui.update()
         i += 1
-    # canvas_image.put('white', )
