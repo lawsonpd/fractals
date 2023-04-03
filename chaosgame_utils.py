@@ -79,3 +79,4 @@ def polygon_from_center(center:tuple, radius:int, num_vertices:int) -> tuple:
     y_part = lambda i: radius * math.sin(rad(i * alpha))
 
     return [(round_dec(center[0] + x_part(i)), round_dec(center[1] + y_part(i))) for i in range(num_vertices)]
+

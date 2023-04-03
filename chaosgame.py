@@ -9,14 +9,14 @@ class FractalGUI(tk.Tk):
 
         self.title("Fractal chaos game")
 
-        self.ui_frame = tk.Frame(self, width=200, bg="white")
-        self.ui_frame.pack()
+        self.main_frame = tk.Frame(self, width=width, height=height, bg="black")
+        self.main_frame.pack(expand=True)
 
-        self.test_lbl = tk.Label(self.ui_frame, text="Test")
-        self.test_lbl.pack()
+        self.ui_frame = tk.Frame(self.main_frame, height=height, width=200, bg="black")
+        self.ui_frame.pack(fill=tk.BOTH, side=tk.LEFT)
 
-        self.canvas = tk.Canvas(self, bg="black", width=width, height=height)
-        self.canvas.pack(fill=tk.X)
+        self.canvas = tk.Canvas(self.main_frame, bg="black", width=width, height=height)
+        self.canvas.pack(fill=tk.BOTH, side=tk.RIGHT)
 
         self.img = tk.PhotoImage(width=width, height=height)
         self.canvas_img = self.canvas.create_image((width//2, height//2), image=self.img, state="normal")
@@ -56,6 +56,6 @@ if __name__ == '__main__':
     while True:
         point = game.generate_point(i=i, jump_factor=0.5, skip_n=0)
         print(f'Iteration {i}; point is {point}')
-        gui.canvas_img.put('white', point)
+        gui.img.put('white', point)
         gui.update()
         i += 1
